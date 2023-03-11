@@ -1,5 +1,5 @@
 require('dotenv/config');
-const { Client, IntentsBitField } = require('discord.js');
+const { Client, IntentsBitField,ActivityType } = require('discord.js');
 const { Configuration, OpenAIApi } = require('openai');
 
 const client = new Client({
@@ -10,9 +10,31 @@ const client = new Client({
   ],
 });
 
-client.on('ready', () => {
-  console.log('The bot is online!');
+let status = [
+  {
+    name: 'Youtube',
+    type: ActivityType.Watching,
+    url: 'https://youtu.be/6Ig__B6tNaQ'
+  },
+  {
+    name: 'discord.js',
+    type: ActivityType.Listening,
+  },
+  {
+    name: 'VALORANT',
+    type: ActivityType.Playing,
+  }
+]
+
+client.on("ready", (c) => {
+  console.log(`${c.user.username} is ready 👌`);
+
+  setInterval(() => {
+      let random = Math.floor(Math.random() * status.length);
+      client.user.setActivity(status[random]);
+    }, 180000);
 });
+
 
 const configuration = new Configuration({
   apiKey: process.env.API_KEY,
@@ -24,7 +46,7 @@ client.on('messageCreate', async (message) => {
   if (message.channel.id !== process.env.CHANNEL_ID) return;
   if (message.content.startsWith('!')) return;
 
-  let conversationLog = [{ role: 'system', content: 'You are a friendly chatbot.' }];
+  let conversationLog = [{ role: 'system', content: 'You are a Sarcastic chatbot.' }];
 
   try {
     await message.channel.sendTyping();
