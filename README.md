@@ -1,41 +1,27 @@
-# GPT 3.5 Turbo Chat Bot
+# Muse-Chan Bot
 
-This is a simple Discord chat bot built using discord.js and the gpt-3.5-turbo model from Open AI. This is the same model used for the popular chatbot Chat GPT.
+This is a simple Discord chat bot built using discord.js and the gpt-3.5-turbo model from Open AI. 
 
-A full video tutorial for this chat bot can be found [here](https://youtu.be/CB76_GDrPsE)
 
 ## How to setup
 
-1. Clone the repository to the current directory
+1. clone the repository or fork it.
 
-```powershell
-git clone https://github.com/notunderctrl/gpt-3.5-chat-bot.git .
-```
-
-2. Install all the dependencies
+2. Install all the dependencies--> openai discord.js dotenv 
 
 - Using npm
 ```powershell
-npm install
+npm install discord.js openai dotenv
 ```
 
-- Using yarn
+- Using yarn (i prefer npm so typed it completely )
 ```powershell
 yarn
 ```
 
-3. Create a new file called `.env` and copy the format from `.env.example` (or you can just rename `.env.example`)
-
+3. Create a new file called `.env` or rename the `.env.example`
 4. Update `.env` with your own credentials.
 
-5. Start your bot
+5. Start your bot(just run the index.js)  
 
-- Using npm
-```powershell
-npm run start
-```
-
-- Using yarn
-```powershell
-yarn start
-```
+node index.js
