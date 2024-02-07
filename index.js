@@ -1,84 +1,70 @@
-require('dotenv/config');
-const { Client, IntentsBitField,ActivityType } = require('discord.js');
-const { Configuration, OpenAIApi } = require('openai');
+const axios = require('axios');
+require('dotenv').config(); 
+const { Client, IntentsBitField } = require('discord.js');
 
 const client = new Client({
   intents: [
     IntentsBitField.Flags.Guilds,
     IntentsBitField.Flags.GuildMessages,
     IntentsBitField.Flags.MessageContent,
-  ],
-});
+  ]
+})
 
-let status = [
-  {
-    name: 'Youtube',
-    type: ActivityType.Watching,
-    url: 'https://youtu.be/6Ig__B6tNaQ'
-  },
-  {
-    name: 'discord.js',
-    type: ActivityType.Listening,
-  },
-  {
-    name: 'VALORANT',
-    type: ActivityType.Playing,
-  }
-]
-
-client.on("ready", (c) => {
-  console.log(`${c.user.username} is ready 👌`);
-
-  setInterval(() => {
-      let random = Math.floor(Math.random() * status.length);
-      client.user.setActivity(status[random]);
-    }, 180000);
-});
-
-
-const configuration = new Configuration({
-  apiKey: process.env.API_KEY,
-});
-const openai = new OpenAIApi(configuration);
+client.on('ready', () => {
+  console.log("Muse-chan is ready!🫡");
+})
 
 client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
   if (message.channel.id !== process.env.CHANNEL_ID) return;
   if (message.content.startsWith('!')) return;
 
-  let conversationLog = [{ role: 'system', content: 'You are a tsundere waifu.You will respond like a tsundere.' }];
+  let conversationLog = [{ role: 'system', content: "You are a tsundere chatbot." }];
 
-  try {
-    await message.channel.sendTyping();
+  await message.channel.sendTyping();
 
-    let prevMessages = await message.channel.messages.fetch({ limit: 15 });
-    prevMessages.reverse();
+  let prevMessages = await message.channel.messages.fetch({ limit: 15 });
+  prevMessages.reverse();
 
-    prevMessages.forEach((msg) => {
-      if (message.content.startsWith('!')) return;
-      if (msg.author.id !== client.user.id && message.author.bot) return;
-      if (msg.author.id !== message.author.id) return;
+  prevMessages.forEach((msg)=>{
+    if (message.content.startsWith('!')) return;
+    if (msg.author.id !== client.user.id && message.author.bot) return;
+    if (msg.author.id !== message.author.id) return;
 
-      conversationLog.push({
-        role: 'user',
-        content: msg.content,
+    conversationLog.push({
+      role: 'user',
+      content: msg.content
+    })
+  })
+
+  async function createChatCompletion() {
+    const url = 'http://localhost:1234/v1/chat/completions';
+    const apiKey = 'not-needed';
+
+    const body = {
+      model: 'local-model',
+      messages: conversationLog, 
+      temperature: 0.7
+    };
+
+    try {
+      const response = await axios.post(url, body, { 
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`
+        }
       });
-    });
 
-    const result = await openai
-      .createChatCompletion({
-        model: 'gpt-3.5-turbo',
-        messages: conversationLog,
-        // max_tokens: 256, // limit token usage
-      })
-      .catch((error) => {
-        console.log(`OPENAI ERR: ${error}`);
-      });
+      const data = response.data; 
 
-    message.reply(result.data.choices[0].message);
-  } catch (error) {
-    console.log(`ERR: ${error}`);
+      message.reply(data.choices[0].message.content + `<@${message.author.id}>`);
+    } catch (error) {
+      console.error('Error:', error);
+    }
   }
+
+  createChatCompletion();
+
 });
 
 client.login(process.env.TOKEN);
