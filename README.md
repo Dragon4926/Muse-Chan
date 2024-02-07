@@ -19,7 +19,7 @@
 </head>
 <body>
 
-  <h1>Discord Bot with OpenAI Integration</h1>
+  <h1>Discord Bot with OpenAI Integration(without API KEY)</h1>
 
   <h2>Introduction</h2>
   <p>This Discord bot is designed to enhance your server experience by providing automated responses based on a conversation history using OpenAI's GPT-3.5-turbo model. Additionally, the bot features a dynamic status that changes periodically.</p>
